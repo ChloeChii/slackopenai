@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bot System Messages</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .column {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .left-column {
+            background-color: #f2f2f2;
+        }
+
+        .right-column {
+            background-color: #e6e6e6;
+        }
+
+        .large-textbox {
+            width: 99%;
+            height: 200px;
+            padding: 10px;
+        }
+
+        .long-textbox {
+            width: 99%;
+            height: 400px;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column left-column">
+            <!-- Ask a Question -->
+            <h2>Ask a Question</h2>
+            <textarea class="large-textbox" id="questionInput" placeholder="Enter your question"></textarea>
+            <!-- Bot system messages -->
+            <h2>Bot System Messages</h2>
+            <textarea class="large-textbox" id="systemMessages" placeholder="Enter bot system messages"></textarea>
+            <button onclick="sendSystemMessages()">Send System Messages</button>
+        </div>
+        <div class="column right-column">
+            <!-- Backend response section -->
+            <h2>Bot Response</h2>
+            <textarea class="long-textbox" id="responseContainer" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function sendSystemMessages() {
+            // Retrieve the question and bot system messages
+            var question = document.getElementById("questionInput").value;
+            var systemMessages = document.getElementById("systemMessages").value;
+
+            // Send the question and system messages to the backend using an AJAX request
+            var url = 'http://127.0.0.1:5000/generate_response'; // Modify the host and port accordingly
+            var data = {
+                question: question,
+                systemMessages: systemMessages
+            };
+            // Send the question to the backend using an AJAX request
+            axios.post(url, data)
+            .then(function (response) {
+                // Handle the response from the backend
+                console.log(response.data);
+                // Extract the generated response from the response object
+                var backendResponse = response.data.response;
+
+                // Check if the response is null or empty
+                if (backendResponse) {
+                    // Response is not null or empty, display it in the bot response container
+                    var responseContainer = document.getElementById("responseContainer");
+                    responseContainer.value = backendResponse;
+                } else {
+                    // Response is null or empty, display an error message or handle it as desired
+                    console.log("Received an empty response from the backend.");
+                }
+            })
+            .catch(function (error) {
+                // Handle any errors
+                console.error(error);
+            });
+        }
+        
+
+    </script>
+</body>
+</html>
